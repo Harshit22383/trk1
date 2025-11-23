@@ -1,0 +1,22 @@
+{
+  "name": "tourist-raksha-kavach",
+  "version": "1.0.0",
+  "description": "Tourist Safety Companion App with Firebase Integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "safety",
+    "sos",
+    "firebase",
+    "location-tracking"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "firebase": "^10.14.1"
+  }
+}

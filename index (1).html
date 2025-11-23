@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourist Raksha Kavach</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        window.ENV = {
+            FIREBASE_API_KEY: '',
+            FIREBASE_PROJECT_ID: '',
+            FIREBASE_APP_ID: ''
+        };
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>🛡️ Tourist Raksha Kavach</h1>
+            <p>Your Safety Companion</p>
+        </div>
+
+        <div id="loginScreen" class="content">
+            <div class="auth-form">
+                <h2 class="section-title" style="text-align: center;">Login</h2>
+                <div id="loginError" class="alert alert--error hidden"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Login</button>
+                </form>
+                <a class="text-link" id="showRegisterLink">Don't have an account? Register</a>
+            </div>
+        </div>
+
+        <div id="registerScreen" class="content hidden">
+            <div class="auth-form">
+                <h2 class="section-title" style="text-align: center;">Register</h2>
+                <div id="registerError" class="alert alert--error hidden"></div>
+                <div id="registerSuccess" class="alert alert--success hidden"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label" for="registerName">Full Name</label>
+                        <input type="text" id="registerName" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="registerPhone">Phone Number</label>
+                        <input type="tel" id="registerPhone" class="form-control" placeholder="Enter your phone number" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Register</button>
+                </form>
+                <a class="text-link" id="showLoginLink">Already have an account? Login</a>
+            </div>
+        </div>
+
+        <div id="dashboardScreen" class="content hidden">
+            <div class="user-info">
+                <div>
+                    <div class="user-name" id="userName"></div>
+                    <div class="user-email" id="userEmail"></div>
+                </div>
+                <button class="btn btn--secondary btn--small" id="logoutBtn">Logout</button>
+            </div>
+
+            <div class="sos-container">
+                <h2 class="section-title">Emergency SOS</h2>
+                <p class="sos-description">Press and hold the button for 2 seconds to activate emergency alert</p>
+                <button class="btn btn--danger" id="sosBtn">
+                    🚨<br>SOS<br>ALERT
+                </button>
+            </div>
+
+            <div>
+                <h2 class="section-title">Your SOS Contacts</h2>
+                <div id="contactsList"></div>
+                <button class="btn btn--secondary" id="addContactBtn" style="margin-top: var(--space-12);">+ Add SOS Contact</button>
+            </div>
+
+            <div>
+                <h2 class="section-title" style="margin-top: var(--space-32);">Geo-Fencing</h2>
+                <div id="geofencesList"></div>
+                <button class="btn btn--secondary" id="addGeofenceBtn" style="margin-top: var(--space-12);">+ Add Safe Zone</button>
+            </div>
+
+            <div>
+                <h2 class="section-title" style="margin-top: var(--space-32);">Emergency Services</h2>
+                <div class="emergency-services">
+                    <div class="service-btn" onclick="window.callEmergency('100', 'Police')">
+                        <div class="service-btn-icon">👮</div>
+                        <div class="service-btn-label">Police</div>
+                        <div class="service-btn-number">100</div>
+                    </div>
+                    <div class="service-btn" onclick="window.callEmergency('102', 'Ambulance')">
+                        <div class="service-btn-icon">🚑</div>
+                        <div class="service-btn-label">Ambulance</div>
+                        <div class="service-btn-number">102</div>
+                    </div>
+                    <div class="service-btn" onclick="window.callEmergency('101', 'Fire Service')">
+                        <div class="service-btn-icon">🚒</div>
+                        <div class="service-btn-label">Fire Service</div>
+                        <div class="service-btn-number">101</div>
+                    </div>
+                    <div class="service-btn" onclick="window.callEmergency('1091', 'Women Helpline')">
+                        <div class="service-btn-icon">👩</div>
+                        <div class="service-btn-label">Women Helpline</div>
+                        <div class="service-btn-number">1091</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="location-display">
+                <h3>📍 Your Current Location</h3>
+                <div class="location-info">
+                    <span class="status-badge" id="locationStatus">Tracking Active</span>
+                </div>
+                <div class="location-coords" id="locationCoords">Getting location...</div>
+                <div style="display: flex; gap: var(--space-8); margin-top: var(--space-12);">
+                    <button class="btn btn--secondary btn--small" id="refreshLocationBtn" style="flex: 1;">Refresh Location</button>
+                    <button class="btn btn--secondary btn--small" id="viewHistoryBtn" style="flex: 1;">View History</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="addContactModal" class="content hidden">
+            <div class="auth-form">
+                <h2 class="section-title" style="text-align: center;">Add SOS Contact</h2>
+                <form id="addContactForm">
+                    <div class="form-group">
+                        <label class="form-label" for="contactName">Contact Name</label>
+                        <input type="text" id="contactName" class="form-control" placeholder="Enter contact name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contactPhone">Phone Number</label>
+                        <input type="tel" id="contactPhone" class="form-control" placeholder="Enter phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contactRelation">Relationship</label>
+                        <input type="text" id="contactRelation" class="form-control" placeholder="e.g., Friend, Family" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Save Contact</button>
+                    <button type="button" class="btn btn--secondary" id="cancelAddContactBtn" style="margin-top: var(--space-8);">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="addGeofenceModal" class="content hidden">
+            <div class="auth-form">
+                <h2 class="section-title" style="text-align: center;">Add Safe Zone</h2>
+                <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-16); text-align: center;">
+                    This will create a safe zone at your current location
+                </p>
+                <form id="addGeofenceForm">
+                    <div class="form-group">
+                        <label class="form-label" for="geofenceName">Zone Name</label>
+                        <input type="text" id="geofenceName" class="form-control" placeholder="e.g., Hotel, Tourist Spot" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="geofenceRadius">Radius (meters)</label>
+                        <input type="number" id="geofenceRadius" class="form-control" placeholder="e.g., 500" value="500" min="50" max="5000" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Create Safe Zone</button>
+                    <button type="button" class="btn btn--secondary" id="cancelAddGeofenceBtn" style="margin-top: var(--space-8);">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="locationHistoryModal" class="content hidden">
+            <div class="auth-form">
+                <h2 class="section-title" style="text-align: center;">Location History</h2>
+                <p style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--space-16); text-align: center;">
+                    Last 50 km of your travel history
+                </p>
+                <div id="locationHistoryList" style="max-height: 400px; overflow-y: auto;"></div>
+                <button type="button" class="btn btn--secondary" id="closeHistoryBtn" style="margin-top: var(--space-16);">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="battery-modal" class="battery-modal">
+        <div class="battery-modal-content">
+            <h2>Critical Battery Warning!</h2>
+            <p>Your device battery is <strong>very low</strong>. Please charge soon to avoid interruption.</p>
+            <button onclick="document.getElementById('battery-modal').style.display='none';" style="margin-top: 16px; padding: 8px 16px; cursor: pointer;">Dismiss</button>
+        </div>
+    </div>
+
+    <script type="module" src="/js/app.js"></script>
+</body>
+</html>
